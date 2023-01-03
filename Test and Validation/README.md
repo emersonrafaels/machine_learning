@@ -37,6 +37,8 @@ There are **two alternatives to model validation**: *cross validation holdout* a
     <img alt="Machine Learning - Tests and Validation - Kfolds" title="#TEST_VALIDATION_KFOLDS" src="./assets/kfolds.png" />
 </h1>
 
+*The example above is for any process using 5 folds. The number of folds is chosen by the data scientist.
+
 <h1 align="center">
     <img alt="Machine Learning - Tests and Validation - Kfolds" title="#TEST_VALIDATION_KFOLDS" src="./assets/grid_search_cross_validation.png" />
 </h1>

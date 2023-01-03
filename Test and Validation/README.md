@@ -1,19 +1,3 @@
-<h1> Holdout </h1>
-
-<h1 align="center">
-    <img alt="Machine Learning - Tests and Validation - Holdout" title="#TEST_VALIDATION_HOLDOUT" src="./assets/Holdout_i.png" />
-</h1>
-
-<h1> KFolds </h1>
-
-<h1 align="center">
-    <img alt="Machine Learning - Tests and Validation - Kfolds" title="#TEST_VALIDATION_KFOLDS" src="./assets/kfolds.png" />
-</h1>
-
-<h4 align="center"> 
-	Machine Learning - Tests and Validation 🚀
-</h4>
-
 <p align="center">
   	
   <a href="https://www.linkedin.com/in/emerson-rafael/">

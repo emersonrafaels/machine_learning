@@ -34,6 +34,21 @@
 
 ## 💻 Test and Validation
 
+The **error rate on new cases** (not seen in the training step) is called **error of generalization**. 
+This step is util to hyperparameters adjust or model selection. 
+There are **two alternatives to model validation**: *cross validation holdout* and *kfolds*.
+
+### Holdout
+
+<h1 align="center">
+    <img alt="Machine Learning - Tests and Validation - Holdout" title="#TEST_VALIDATION_HOLDOUT" src="./assets/Holdout_i.png" />
+</h1>
+
+1. Train + Validation dataset: Used to choice the best model and hyperparameters
+2. Test dataset: Used to evaluate the generalization error.
+
+### Kfolds
+
 ## ✍️  Libs
 
  - **[Scikit Learn](https://scikit-learn.org/)**
@@ -50,10 +65,10 @@ The following libs were used in building the project:
 
 ## ➊ Requirement
 
-- Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas (O download pode ser realizado pela própria página do Python ou Anaconda):
+- Before starting, you will need had installed in your machine this tools: (The download can be done in itself page of Python or Anacondaa):
 [Python](https://www.anaconda.com/products/individual).
 
-- Realizar a instalação do requirements, obtendo todas as bibliotecas necessárias para execução do projeto.
+- Do the install of requirements, getting all the necessary libraries for the execution of the project.
 
 ## 📝 License
 

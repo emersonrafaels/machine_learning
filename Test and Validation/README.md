@@ -31,7 +31,7 @@ There are **two alternatives to model validation**: *cross validation holdout* a
 1. Train + Validation dataset: Used to choice the best model and hyperparameters
 2. Test dataset: Used to evaluate the generalization error.
 
-### 
+### Kfolds
 
 <h1 align="center">
     <img alt="Machine Learning - Tests and Validation - Kfolds" title="#TEST_VALIDATION_KFOLDS" src="./assets/kfolds.png" />

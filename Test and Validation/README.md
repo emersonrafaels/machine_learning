@@ -31,6 +31,13 @@ There are **two alternatives to model validation**: *cross validation holdout* a
 1. **Train + Validation dataset**: Used to choice the best model and hyperparameters
 2. **Test dataset**: Used to evaluate the generalization error.
 
+The step-by-step is:
+
+1. Random selection of datasets: train, validation and test.
+2. Choose the best model and hyperparameters using the train dataset and validation dataset.
+3. Retrain using complete dataset (Train Dataset + Validation Dataset)
+4. Get the generalization error (using any cost function) using test dataset.
+
 ### Kfolds
 
 <h1 align="center">

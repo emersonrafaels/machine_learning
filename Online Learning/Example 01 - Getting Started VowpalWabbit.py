@@ -23,14 +23,14 @@ def load_init_data():
 
     return train_examples
 
+
 def load_test_data():
 
     # CREATING EXAMPLES - TEST
-    test_examples = [
-        "| price:.46 sqft:.4 age:.10 1924"
-    ]
+    test_examples = ["| price:.46 sqft:.4 age:.10 1924"]
 
     return test_examples
+
 
 # CREATING AN INSTANCE OF VOWPAL WABBIT
 # quiet=True, avoid diagnostic informations in console
@@ -48,10 +48,3 @@ test_examples = load_test_data()
 # DOING PREDICTIONS
 predictions = [model.predict(example) for example in test_examples]
 print(predictions)
-
-
-
-
-
-
-

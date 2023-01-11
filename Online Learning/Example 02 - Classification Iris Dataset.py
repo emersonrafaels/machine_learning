@@ -1,4 +1,6 @@
 # IMPORTING LIBRARIES
+from pprint import pprint
+
 import pandas as pd
 import sklearn
 import sklearn.model_selection
@@ -108,7 +110,13 @@ def orchestra_train_test_model(SEED=0):
     predictions = [model.predict(example) for example in data_vw_format_test]
 
     # GET METRICS
-    result["accuracy"] = accuracy_score(y_pred=predictions, y_true=testing_data[column_target])
+    result["support"] = len(predictions)
+    result["accuracy"] = accuracy_score(y_pred=predictions,
+                                        y_true=testing_data[column_target])
+    result["classification_report"] = classification_report(y_pred=predictions,
+                                                            y_true=testing_data[column_target],
+                                                            output_dict=True,
+                                                            zero_division=0)
 
     return predictions, result
 
@@ -117,4 +125,4 @@ if __name__ == '__main__':
 
     predictions, results = orchestra_train_test_model(SEED=SEED)
 
-    print(results)
+    pprint(results)

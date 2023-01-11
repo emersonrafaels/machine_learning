@@ -4,7 +4,9 @@ import sklearn
 import sklearn.model_selection
 import sklearn.datasets
 import vowpalwabbit
+from sklearn.metrics import classification_report, accuracy_score
 
+SEED = 42
 
 class Dataframe_VW():
 
@@ -61,22 +63,58 @@ class Dataframe_VW():
         return data_vw_format
 
 
-# IMPORTING DATA
-iris_dataset = sklearn.datasets.load_iris()
+def orchestra_train_test_model(SEED=0):
 
-# TRANSFORM DATA INTO DATAFRAME
-iris_dataframe = pd.DataFrame(
-    data=iris_dataset.data, columns=iris_dataset.feature_names
-)
+    # INIT DICT RESULT
+    result = {}
 
-column_target = "y"
+    # IMPORTING DATA
+    iris_dataset = sklearn.datasets.load_iris()
 
-# vw expects labels starting from 1
-iris_dataframe[column_target] = iris_dataset.target + 1
+    # TRANSFORM DATA INTO DATAFRAME
+    iris_dataframe = pd.DataFrame(
+        data=iris_dataset.data, columns=iris_dataset.feature_names
+    )
 
-# CONVERTING DATAFRAME TO VW FORMAT
-data_vw_format = Dataframe_VW().convert_dataframe_to_vw_format(
-    dataframe=iris_dataframe, column_target=column_target
-)
+    # COLUMN TARGET
+    column_target = "y"
 
-print(data_vw_format)
+    # vw expects labels starting from 1
+    iris_dataframe[column_target] = iris_dataset.target + 1
+
+    # SPLITING TRAIN AND TEST DATASET
+    training_data, testing_data = sklearn.model_selection.train_test_split(
+        iris_dataframe, test_size=0.2, random_state=SEED
+    )
+
+    # CONVERTING DATAFRAME TO VW FORMAT - TRAIN
+    data_vw_format_train = Dataframe_VW().convert_dataframe_to_vw_format(
+        dataframe=training_data, column_target=column_target
+    )
+
+    # CONVERTING DATAFRAME TO VW FORMAT - TEST
+    data_vw_format_test = Dataframe_VW().convert_dataframe_to_vw_format(
+        dataframe=testing_data, column_target=column_target
+    )
+
+    # CREATING AN INSTANCE OF VOWPAL WABBIT
+    # quiet=True, avoid diagnostic informations in console
+    model = vowpalwabbit.Workspace("--oaa 3 --quiet")
+
+    # LEARNING WITH TRAIN DATASET
+    [model.learn(example) for example in data_vw_format_train]
+
+    # DOING PREDICTIONS
+    predictions = [model.predict(example) for example in data_vw_format_test]
+
+    # GET METRICS
+    result["accuracy"] = accuracy_score(y_pred=predictions, y_true=testing_data[column_target])
+
+    return predictions, result
+
+
+if __name__ == '__main__':
+
+    predictions, results = orchestra_train_test_model(SEED=SEED)
+
+    print(results)

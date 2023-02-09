@@ -41,77 +41,6 @@ widget:
 - text: "Todavia, entendo que extrair da aludida norma o sentido expresso na redação acima implica desconstruir o significado do texto constitucional, o que é absolutamente vedado ao intérprete. Nesse sentido, cito Dimitri Dimoulis: ‘(...) ao intérprete não é dado escolher significados que não estejam abarcados pela moldura da norma. Interpretar não pode significar violentar a norma.’ (Positivismo Jurídico. São Paulo: Método, 2006, p. 220).59. Dessa forma, deve-se tomar o sentido etimológico como limite da atividade interpretativa, a qual não pode superado, a ponto de destruir a própria norma a ser interpretada. Ou, como diz Konrad Hesse, ‘o texto da norma é o limite insuperável da atividade interpretativa.’ (Elementos de Direito Constitucional da República Federal da Alemanha, Porto Alegre: Sergio Antonio Fabris, 2003, p. 71)."
 ---
 
-## (BERT large) NER model in the legal domain in Portuguese (LeNER-Br)
-
-**ner-bert-large-portuguese-cased-lenerbr** is a NER model (token classification) in the legal domain in Portuguese that was finetuned on 20/12/2021 in Google Colab from the model [pierreguillou/bert-large-cased-pt-lenerbr](https://huggingface.co/pierreguillou/bert-large-cased-pt-lenerbr) on the dataset [LeNER_br](https://huggingface.co/datasets/lener_br) by using a NER objective.
-
-Due to the small size of the finetuning dataset, the model overfitted before to reach the end of training. Here are the overall final metrics on the validation dataset (*note: see the paragraph "Validation metrics by Named Entity" to get detailed metrics*):
-  - **f1**: 0.9082022949426265
-  - **precision**: 0.8975220495590088
-  - **recall**: 0.9191397849462366
-  - **accuracy**: 0.9808310603867311
-  - **loss**: 0.1228889599442482
-  
-Check as well the [base version of this model](https://huggingface.co/pierreguillou/ner-bert-base-cased-pt-lenerbr) with a f1 of 0.893.
-
-**Note**: the model [pierreguillou/bert-large-cased-pt-lenerbr](https://huggingface.co/pierreguillou/bert-large-cased-pt-lenerbr) is a language model that was created through the finetuning of the model [BERTimbau large](https://huggingface.co/neuralmind/bert-large-portuguese-cased) on the dataset [LeNER-Br language modeling](https://huggingface.co/datasets/pierreguillou/lener_br_finetuning_language_model) by using a MASK objective. This first specialization of the language model before finetuning on the NER task allows to get a better NER model.
-
-## Blog post
-
-[NLP | Modelos e Web App para Reconhecimento de Entidade Nomeada (NER) no domínio jurídico brasileiro](https://medium.com/@pierre_guillou/nlp-modelos-e-web-app-para-reconhecimento-de-entidade-nomeada-ner-no-dom%C3%ADnio-jur%C3%ADdico-b658db55edfb) (29/12/2021)
-  
-## Widget & App
-
-You can test this model into the widget of this page.
-
-Use as well the [NER App](https://huggingface.co/spaces/pierreguillou/ner-bert-pt-lenerbr) that allows comparing the 2 BERT models (base and large) fitted in the NER task with the legal LeNER-Br dataset.
-
-## Using the model for inference in production
-````
-# install pytorch: check https://pytorch.org/
-# !pip install transformers 
-from transformers import AutoModelForTokenClassification, AutoTokenizer
-import torch
-
-# parameters
-model_name = "pierreguillou/ner-bert-large-cased-pt-lenerbr"
-model = AutoModelForTokenClassification.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-input_text = "Acrescento que não há de se falar em violação do artigo 114, § 3º, da Constituição Federal, posto que referido dispositivo revela-se impertinente, tratando da possibilidade de ajuizamento de dissídio coletivo pelo Ministério Público do Trabalho nos casos de greve em atividade essencial."
-
-# tokenization
-inputs = tokenizer(input_text, max_length=512, truncation=True, return_tensors="pt")
-tokens = inputs.tokens()
-
-# get predictions
-outputs = model(**inputs).logits
-predictions = torch.argmax(outputs, dim=2)
-
-# print predictions
-for token, prediction in zip(tokens, predictions[0].numpy()):
-    print((token, model.config.id2label[prediction]))
-````
-You can use pipeline, too. However, it seems to have an issue regarding to the max_length of the input sequence.
-````
-!pip install transformers
-import transformers
-from transformers import pipeline
-
-model_name = "pierreguillou/ner-bert-large-cased-pt-lenerbr"
-
-ner = pipeline(
-    "ner",
-    model=model_name
-) 
-
-ner(input_text)
-````
-## Training procedure
-
-### Notebook
-
-The notebook of finetuning ([HuggingFace_Notebook_token_classification_NER_LeNER_Br.ipynb](https://github.com/piegu/language-models/blob/master/HuggingFace_Notebook_token_classification_NER_LeNER_Br.ipynb)) is in github.
 
 ### Hyperparameters
 
@@ -137,10 +66,6 @@ The notebook of finetuning ([HuggingFace_Notebook_token_classification_NER_LeNER
 - save_steps = logging_steps
 - load_best_model_at_end = True
 - fp16 = True
-
-# get best model through a metric
-- metric_for_best_model = 'eval_f1'
-- greater_is_better = True
 
 ### Training results
 

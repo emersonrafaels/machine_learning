@@ -8,6 +8,8 @@ text = "VALIDO EM TODO O TERRITÓRIO NACIONAL 13/12/2010 EMERSONV RAFAEL FILIAÇ
 
 input_ids = tokenizer.encode(text, return_tensors='tf')
 
+"""
+
 with tf.device("/cpu:0"):
     output = model(input_ids).last_hidden_state
 
@@ -31,3 +33,5 @@ for word, pred in zip(text.split(), predictions[0].numpy()):
         name = ""
 
 print("Names:", names)
+
+"""

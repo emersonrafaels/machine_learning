@@ -4,7 +4,7 @@ import torch
 def init_model():
 
     # parameters
-    model_name = "ner-bert-large-cased-pt-lenerbr"
+    model_name = "ner-bert-large-cased-pt"
     model = AutoModelForTokenClassification.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 

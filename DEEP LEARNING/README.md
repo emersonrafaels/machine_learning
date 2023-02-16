@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="DEEP LEARNING CODES" title="#DEEPLEARNING" src="./assets/banner.png" />
+    <img alt="DEEP LEARNING CODES" title="#DEEPLEARNING" src="./assets/banner.png" width=800/>
 </h1>
 
 <h4 align="center"> 
@@ -37,9 +37,9 @@
     - Autocalculate new weight to achieve expected error
     
 <h1 align="center">
-    <img alt="SINGLE_LAYER_PERCEPTRON" src="./assets/SINGLE_LAYER_PERCEPTRON.png" />
+    <img alt="SINGLE_LAYER_PERCEPTRON" src="./assets/SINGLE_LAYER_PERCEPTRON.png" width=800/>
 </h1>
 
 <h1 align="center">
-    <img alt="SINGLE_LAYER_PERCEPTRON_WEIGHT_UPDATE" src="./assets/SINGLE_LAYER_PERCEPTRON_WEIGHT_UPDATE.jpg" />
+    <img alt="SINGLE_LAYER_PERCEPTRON_WEIGHT_UPDATE" src="./assets/SINGLE_LAYER_PERCEPTRON_WEIGHT_UPDATE.jpg" width=800/>
 </h1>

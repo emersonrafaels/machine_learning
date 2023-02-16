@@ -78,7 +78,7 @@ inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
 weights = [0, 0]
 
 # CLASSES TRUE
-outputs = [0, 0, 0, 1]
+outputs = [0, 1, 1, 1]
 
 # OBTENDO PARÂMETRO DE TAXA DE APRENDIZADO
 learning_rate = 0.1

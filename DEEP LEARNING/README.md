@@ -35,11 +35,21 @@
 - ['2 - perceptron - Auto Ajuste de Pesos.py'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/2%20-%20perceptron%20-%20Auto%20Ajuste%20de%20Pesos.py)
     - Coding a perceptron - Sum and Activation functions 
     - Autocalculate new weight to achieve expected error
-    
+- ['3 - perceptron - Auto Ajuste de Pesos - Operador OR.py'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/3%20-%20perceptron%20-%20Auto%20Ajuste%20de%20Pesos%20-%20Operador%20OR.py)
+	- Coding a perceptron - Sum and Activation functions to operator OR
+    - Autocalculate new weight to achieve expected error
+
 <h1 align="center">
     <img alt="SINGLE_LAYER_PERCEPTRON" src="./assets/SINGLE_LAYER_PERCEPTRON.png" width=800/>
 </h1>
 
 <h1 align="center">
     <img alt="SINGLE_LAYER_PERCEPTRON_WEIGHT_UPDATE" src="./assets/SINGLE_LAYER_PERCEPTRON_WEIGHT_UPDATE.jpg" width=800/>
+</h1>	
+
+- ['4 - MultiLayer - Sigmoid.ipynb'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/4%20-%20MultiLayer%20-%20Sigmoid.ipynb)
+	- Coding a multilayer using sigmoid function as activation.
+
+<h1 align="center">
+    <img alt="MULTILAYER" src="./assets/MULTILAYER_i.png" width=800/>
 </h1>

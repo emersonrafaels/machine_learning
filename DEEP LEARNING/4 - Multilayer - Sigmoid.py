@@ -24,7 +24,7 @@ def get_error(predict, y_true):
     # OBTENDO A QUANTIDADE ABSOLUTA DE ERROS
     absolute_error = y_true - predict
 
-    return absolute_error, np.mean(absolute_error)
+    return absolute_error, np.mean(np.abs(absolute_error))
 
 
 def execute_model(epochs=100):

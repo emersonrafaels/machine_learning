@@ -32,11 +32,19 @@
 
 - ['1 - perceptron - Funcao Soma e Funcao Ativacao.py'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/1%20-%20perceptron%20-%20Funcao%20Soma%20e%20Funcao%20Ativacao.py)
     - Coding a perceptron - Sum and Activation functions
+    - Activation function: Sigmoid
 - ['2 - perceptron - Auto Ajuste de Pesos.py'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/2%20-%20perceptron%20-%20Auto%20Ajuste%20de%20Pesos.py)
-    - Coding a perceptron - Sum and Activation functions 
+    - Coding a perceptron - Sum and Activation functions
+    - Activation function: Sigmoid 
     - Autocalculate new weight to achieve expected error
 - ['3 - perceptron - Auto Ajuste de Pesos - Operador OR.py'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/3%20-%20perceptron%20-%20Auto%20Ajuste%20de%20Pesos%20-%20Operador%20OR.py)
 	- Coding a perceptron - Sum and Activation functions to operator OR
+	- Activation function: Step function
+    - Autocalculate new weight to achieve expected error
+- ['4 - Multilayer - Sigmoid.py'](https://github.com/emersonrafaels/machine_learning/blob/master/DEEP%20LEARNING/4%20-%20Multilayer%20-%20Sigmoid.py)
+	- Coding a multilayer perceptron - Sum and Activation functions to all operators
+	- Activation function: Sigmoid
+	- Calculate absolute error
     - Autocalculate new weight to achieve expected error
 
 <h1 align="center">

@@ -25,14 +25,18 @@ def buscar_dados_wholesale_customers():
     Retorna:
         tuple: Uma tupla contendo os recursos (X) e os alvos (y) como DataFrames do pandas.
     """
+    
+    # Esse é um dataset não supervisionado, então retornamos apenas X
+    y = None
+    
     # Busca o conjunto de dados
     wholesale_customers = fetch_ucirepo(id=292)
 
     # Extrai os dados
-    df = wholesale_customers.data.features.copy()
-    df["Region"] = wholesale_customers.data.targets
+    X = wholesale_customers.data.features.copy()
+    X["Region"] = wholesale_customers.data.targets
 
-    return df
+    return X, y
 
 def imprimir_metadados(df, n=5):
     """

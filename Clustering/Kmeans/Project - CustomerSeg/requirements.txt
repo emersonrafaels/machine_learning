@@ -1,0 +1,7 @@
+unidecode
+ucimlrepo
+mlflow
+scikit-learn
+pandas
+dynaconf
+loguru

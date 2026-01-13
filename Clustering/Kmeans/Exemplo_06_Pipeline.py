@@ -1,5 +1,5 @@
 """
-Exemplo 05 - Otimização e pipeline
+Exemplo 06 - Otimização e pipeline
 
 Descrição:
 Este exemplo demonstra como criar um pipeline de Machine Learning com pré-processamento e KMeans.

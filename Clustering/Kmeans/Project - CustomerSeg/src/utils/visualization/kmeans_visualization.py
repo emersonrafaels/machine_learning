@@ -14,7 +14,7 @@ def plot_elbow_method(inertia_values, k_range):
         k_range (list): Intervalo de valores de k (número de clusters).
 
     Returns:
-        None
+        matplotlib.pyplot: Objeto do gráfico gerado.
     """
     plt.figure(figsize=(8, 5))
     plt.plot(k_range, inertia_values, marker="o", linestyle="--", color="b")
@@ -36,7 +36,7 @@ def plot_silhouette_scores(silhouette_scores, k_range):
         k_range (list): Intervalo de valores de k (número de clusters).
 
     Returns:
-        None
+        matplotlib.pyplot: Objeto do gráfico gerado.
     """
     plt.figure(figsize=(8, 5))
     plt.plot(k_range, silhouette_scores, marker="o", linestyle="--", color="g")

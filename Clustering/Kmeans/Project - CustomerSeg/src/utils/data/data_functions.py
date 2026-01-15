@@ -465,6 +465,29 @@ def select_columns(df: pd.DataFrame, target_columns: list) -> pd.DataFrame:
     return df[existing_columns]
 
 
+def drop_columns(df: pd.DataFrame, columns_to_drop: list) -> pd.DataFrame:
+    """
+    Remove colunas específicas de um DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame original.
+        columns_to_drop (list): Lista de nomes de colunas a serem removidas.
+
+    Returns:
+        pd.DataFrame: DataFrame sem as colunas especificadas.
+
+    Raises:
+        ValueError: Se alguma coluna especificada não existir no DataFrame.
+    """
+    # Verifica se todas as colunas existem no DataFrame
+    missing_columns = [col for col in columns_to_drop if col not in df.columns]
+    if missing_columns:
+        logger.warning(f"As seguintes colunas não existem no DataFrame: {missing_columns}")
+
+    # Remove as colunas especificadas
+    return df.drop(columns=columns_to_drop)
+
+
 def export_to_json(
     data: Union[pd.DataFrame, Dict[str, Union[pd.DataFrame, dict]]],
     file_path: Union[str, Path],

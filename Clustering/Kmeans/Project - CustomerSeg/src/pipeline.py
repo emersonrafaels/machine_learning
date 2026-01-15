@@ -18,30 +18,57 @@ from src.model.model import create_kmeans_model, KMeansConfig, find_optimal_clus
 from src.postprocessing.postprocessing import analyze_clusters
 from src.utils.visualization.kmeans_visualization import plot_clusters, save_plot_to_tempfile
 
-def run_pipeline():
+def run_pipeline(list_columns_to_drop=None,
+                 k_clusters=None,
+                 find_optimal_clusters_method="silhouette"):
     """
     Executa a pipeline completa de ciência de dados para segmentação de clientes.
+    
+    Args:
+        list_columns_to_drop (list[str], opcional):
+            Lista de nomes de colunas a serem descartadas do conjunto de dados.
+            Padrão é None (nenhuma coluna descartada).
+        k_clusters (int, opcional):
+            Número de clusters para o modelo KMeans.
+            Definir como None para detectar automaticamente o número ideal de clusters.
+            Padrão é None.
+        find_optimal_clusters_method (str):
+            Método para determinar o número ideal de clusters ("silhouette" ou "elbow").
+    
+    Returns:
+        None
+    
     """
     mlflow.set_experiment("Customer Segmentation")
     with mlflow.start_run():
 
         # 1. Obter os dados
-        X, _ = buscar_dados_wholesale_customers()
+        X, _ = buscar_dados_wholesale_customers(list_columns_to_drop=list_columns_to_drop)
 
         # 2. Pré-processamento
         X_transformed, report = smart_preprocess_fit_transform(df=X)
 
         # 3. Modelagem
         config = KMeansConfig()
-        optimal_clusters = find_optimal_clusters(data=X_transformed, 
-                                                 min_clusters=config.k_min, 
-                                                 max_clusters=config.k_max)
-        model = create_kmeans_model(n_clusters=optimal_clusters, config=config)
+        
+        print("-"*50)
+        
+        if not k_clusters:
+            k_clusters = find_optimal_clusters(data=X_transformed, 
+                                                    min_clusters=config.k_min, 
+                                                    max_clusters=config.k_max, 
+                                                    method=find_optimal_clusters_method, 
+                                                    plot=True)
+            
+            logger.info(f"Número ideal de clusters detectado: {k_clusters}")
+            
+        else:
+            logger.info(f"Número de clusters fornecido: {k_clusters}")
+            
+        model = create_kmeans_model(n_clusters=k_clusters, config=config)
         labels = model.fit_predict(X_transformed)
         
-        logger.info(f"Número ideal de clusters detectado: {optimal_clusters}")
-        
-        mlflow.log_param("optimal_clusters", optimal_clusters)
+        mlflow.log_param("k_clusters", k_clusters)
 
         # 4. Pós-processamento
         cluster_info = analyze_clusters(X, labels)
@@ -52,6 +79,7 @@ def run_pipeline():
         print(f"Silhouette Score: {silhouette_avg}")
 
         # 6. Resultados
+        print("-"*50)
         print("Cluster Information:")
         for cluster_id, info in cluster_info.items():
             print(f"Cluster {cluster_id}: {info}")
@@ -69,5 +97,6 @@ def run_pipeline():
         # Salva o gráfico em um arquivo temporário e registra como artefato
         temp_file_path = save_plot_to_tempfile(plt)
         mlflow.log_artifact(temp_file_path, artifact_path="plots")
+        plt.show()
 
         logger.success("Pipeline concluída com sucesso.")

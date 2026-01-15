@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import numpy as np
+from src.utils.visualization.kmeans_visualization import plot_elbow_method, plot_silhouette_scores
 
 
 @dataclass(frozen=True)
@@ -38,28 +39,65 @@ def create_kmeans_model(n_clusters: int, config: KMeansConfig) -> KMeans:
     return model
 
 
-def find_optimal_clusters(data, min_clusters=2, max_clusters=10):
+def find_optimal_clusters(data, min_clusters=2, max_clusters=10, method="silhouette", plot=False):
     """
-    Detecta automaticamente o número ideal de clusters baseado no silhouette score.
+    Detecta automaticamente o número ideal de clusters baseado no método especificado.
+
+    Métodos suportados:
+      - "silhouette": Usa o coeficiente de silhueta para determinar o número ideal de clusters.
+      - "elbow": Usa a soma dos erros quadráticos (inertia) para determinar o "cotovelo".
 
     Args:
         data (np.ndarray or pd.DataFrame): Dados para clustering.
         min_clusters (int): Número mínimo de clusters a testar.
         max_clusters (int): Número máximo de clusters a testar.
+        method (str): Método para determinar o número ideal de clusters ("silhouette" ou "elbow").
+        plot (bool): Se True, gera o gráfico correspondente ao método escolhido.
 
     Returns:
         int: Número ideal de clusters.
+
+    Raises:
+        ValueError: Se o método especificado não for suportado.
     """
-    best_score = -1
-    best_k = min_clusters
+    if method not in ["silhouette", "elbow"]:
+        raise ValueError("Método não suportado. Use 'silhouette' ou 'elbow'.")
 
-    for k in range(min_clusters, max_clusters + 1):
-        model = KMeans(n_clusters=k, random_state=42)
-        labels = model.fit_predict(data)
-        score = silhouette_score(data, labels)
+    if method == "silhouette":
+        best_score = -1
+        best_k = min_clusters
+        silhouette_scores = []
+        k_range = list(range(min_clusters, max_clusters + 1))
 
-        if score > best_score:
-            best_score = score
-            best_k = k
+        for k in k_range:
+            model = KMeans(n_clusters=k, random_state=42)
+            labels = model.fit_predict(data)
+            score = silhouette_score(data, labels)
+            silhouette_scores.append(score)
 
-    return best_k
+            if score > best_score:
+                best_score = score
+                best_k = k
+
+        if plot:
+            plot_silhouette_scores(silhouette_scores, k_range)
+
+        return best_k
+
+    elif method == "elbow":
+        inertia_values = []
+        k_range = list(range(min_clusters, max_clusters + 1))
+
+        for k in k_range:
+            model = KMeans(n_clusters=k, random_state=42)
+            model.fit(data)
+            inertia_values.append(model.inertia_)
+
+        # Detecta o "cotovelo" usando a diferença relativa da inércia
+        deltas = [inertia_values[i] - inertia_values[i + 1] for i in range(len(inertia_values) - 1)]
+        best_k = deltas.index(max(deltas)) + min_clusters
+
+        if plot:
+            plot_elbow_method(inertia_values, k_range)
+
+        return best_k

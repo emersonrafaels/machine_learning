@@ -13,248 +13,21 @@ o ideal é ter uma classe com `fit()` (guarda transformadores por coluna) e `tra
 (reaplica em novos dados sem leakage). Se você quiser, eu te devolvo essa versão.
 """
 
-import sys
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import FunctionTransformer, MinMaxScaler, RobustScaler, StandardScaler
-
-# ---------------------------------------------------------------------
-# Setup de path e configs do seu projeto
-# ---------------------------------------------------------------------
-
-# Resolve o diretório base do projeto
-BASE_DIR = Path(__file__).resolve().parents[2]
-
-# Inclui a raiz no sys.path para permitir imports do src/
-sys.path.append(str(BASE_DIR))
-
+from src.preprocessing.utils import (
+    apply_scaling,
+    apply_log_transformation,
+    _is_binary,
+    _outlier_ratio_iqr,
+    _skewness,
+    _is_nonnegative,
+    _near_constant,
+)
 from src.config.config_logger import logger
-from src.config.config_dynaconf import get_settings
-
-# Inicializa configurações 
-
-
-# ---------------------------------------------------------------------
-# Funções de baixo nível (wrappers simples) - opcionais
-# ---------------------------------------------------------------------
-
-def apply_scaling(
-    data: pd.DataFrame | np.ndarray,
-    *,
-    scaler_type: str = "standard",
-    **kwargs: Any,
-) -> np.ndarray:
-    """
-    Aplica escalonamento aos dados com base no tipo de escalonador.
-
-    Tipos suportados:
-      - "standard": z-score (média 0, desvio 1)
-      - "robust": baseado em mediana e IQR (mais robusto a outliers)
-      - "minmax": escala para intervalo (por padrão [0, 1])
-
-    Args:
-        data:
-            Dados a serem escalonados (DataFrame ou ndarray).
-        scaler_type:
-            Tipo do escalonador: "standard", "robust", "minmax".
-        **kwargs:
-            Parâmetros adicionais do scaler (ex.: feature_range no MinMaxScaler).
-
-    Returns:
-        np.ndarray:
-            Matriz escalonada.
-
-    Raises:
-        ValueError:
-            Se scaler_type não for suportado.
-    """
-    # Loga a escolha do escalonador
-    logger.info(f"Aplicando escalonamento do tipo {scaler_type} aos dados.")
-
-    # Mapeia string -> classe (mais pythonico do que if/elif repetido)
-    scalers_map = {
-        "standard": StandardScaler,
-        "robust": RobustScaler,
-        "minmax": MinMaxScaler,
-    }
-
-    # Busca a classe do scaler, ou lança erro com mensagem clara
-    scaler_cls = scalers_map.get(scaler_type)
-    if scaler_cls is None:
-        raise ValueError("Tipo de escalonador não suportado. Use: 'standard', 'robust' ou 'minmax'.")
-
-    # Instancia o scaler com kwargs e aplica fit_transform
-    scaler = scaler_cls(**kwargs)
-    return scaler.fit_transform(data)
-
-
-def apply_log_transformation(
-    data: pd.DataFrame | np.ndarray,
-    **kwargs: Any,
-) -> np.ndarray:
-    """
-    Aplica transformação log1p (log(1 + x)) aos dados.
-
-    Útil para reduzir assimetria (heavy tails) e comprimir escalas.
-
-    Args:
-        data:
-            Dados a serem transformados.
-        **kwargs:
-            Parâmetros adicionais do FunctionTransformer.
-
-    Returns:
-        np.ndarray:
-            Dados transformados.
-    """
-    # Loga a transformação aplicada
-    logger.info(f"Aplicando transformação log1p aos dados.")
-
-    # FunctionTransformer padroniza a interface sklearn
-    transformer = FunctionTransformer(func=np.log1p, **kwargs)
-
-    # Observação: aqui não chamamos fit(), pois log1p não precisa aprender parâmetros
-    return transformer.transform(data)
-
-
-# ---------------------------------------------------------------------
-# Utilitários / Heurísticas (coluna a coluna)
-# ---------------------------------------------------------------------
-
-def _is_binary(s: pd.Series) -> bool:
-    """
-    Detecta se uma série é binária (até 2 valores distintos ignorando NaNs).
-
-    Por que importa?
-      - Colunas binárias geralmente NÃO precisam de scaling e,
-        dependendo do modelo, escalonar pode até piorar interpretabilidade.
-
-    Args:
-        s: Série a ser analisada.
-
-    Returns:
-        True se a coluna tiver <= 2 valores únicos (sem NaN), senão False.
-    """
-    # Remove NaNs para analisar apenas valores válidos
-    x = s.dropna()
-
-    # Se ficou vazio, não dá pra afirmar que é binário
-    if x.empty:
-        return False
-
-    # Conta valores únicos (pd.unique é rápido e funciona com tipos mistos)
-    return len(pd.unique(x)) <= 2
-
-
-def _outlier_ratio_iqr(s: pd.Series, *, iqr_k: float = 1.5, min_samples: int = 8) -> float:
-    """
-    Calcula a proporção de outliers pelo método do IQR (Tukey fences).
-
-    Um valor é outlier se:
-      x < Q1 - iqr_k * IQR  ou  x > Q3 + iqr_k * IQR
-
-    Heurística importante:
-      - Com amostras muito pequenas, quartis/IQR ficam instáveis.
-        Por isso retornamos 0.0 quando n < min_samples.
-
-    Args:
-        s:
-            Série a ser analisada (pode conter NaN e strings).
-        iqr_k:
-            Multiplicador do IQR (1.5 é padrão; 3.0 é mais conservador).
-        min_samples:
-            Mínimo de amostras válidas para confiar em quartis/IQR.
-
-    Returns:
-        Proporção de outliers (0 a 1).
-    """
-    # Converte para numérico; valores inválidos viram NaN
-    x = pd.to_numeric(s, errors="coerce").dropna()
-
-    # Amostra pequena -> evitar falsos positivos
-    if x.size < min_samples:
-        return 0.0
-
-    # Calcula quartis Q1 e Q3
-    q1, q3 = np.percentile(x, [25, 75])
-
-    # IQR é uma medida robusta de dispersão (Q3 - Q1)
-    iqr = q3 - q1
-
-    # Se IQR é zero, não há dispersão (coluna constante na prática)
-    if iqr == 0:
-        return 0.0
-
-    # Define cercas inferiores/superiores (Tukey fences)
-    lower_bound = q1 - iqr_k * iqr
-    upper_bound = q3 + iqr_k * iqr
-
-    # Máscara booleana de outliers
-    outliers = (x < lower_bound) | (x > upper_bound)
-
-    # Média de booleano = proporção True (outliers)
-    return float(outliers.mean())
-
-
-def _skewness(s: pd.Series, *, min_samples: int = 8) -> float:
-    """
-    Calcula a assimetria (skewness) de forma robusta a NaNs.
-
-    Args:
-        s: Série a ser analisada.
-        min_samples: mínimo de amostras para estimativa confiável.
-
-    Returns:
-        Skewness (float). Retorna 0.0 se a amostra for pequena.
-    """
-    # Converte para numérico e remove NaNs
-    x = pd.to_numeric(s, errors="coerce").dropna()
-
-    # Skewness com poucos dados é instável
-    if x.size < min_samples:
-        return 0.0
-
-    # pandas skew (Fisher-Pearson)
-    return float(pd.Series(x).skew())
-
-
-def _is_nonnegative(s: pd.Series) -> bool:
-    """
-    Verifica se todos os valores válidos (numéricos) são >= 0.
-
-    Útil porque log1p exige valores não-negativos.
-
-    Args:
-        s: Série a ser analisada.
-
-    Returns:
-        True se não houver negativos; True também para série vazia após dropna.
-    """
-    x = pd.to_numeric(s, errors="coerce").dropna()
-    return True if x.empty else bool((x >= 0).all())
-
-
-def _near_constant(s: pd.Series, *, tol_unique: int = 1) -> bool:
-    """
-    Detecta se uma coluna é constante/quase constante.
-
-    Args:
-        s: Série a ser analisada.
-        tol_unique:
-            Número máximo de valores únicos para considerar constante.
-            - 1: constante
-            - 2+: "quase constante" (útil em alguns cenários)
-
-    Returns:
-        True se nunique <= tol_unique, senão False.
-    """
-    x = pd.to_numeric(s, errors="coerce").dropna()
-    return True if x.empty else (x.nunique() <= tol_unique)
-
 
 # ---------------------------------------------------------------------
 # Relatórios (explicabilidade do que foi aplicado)
@@ -348,7 +121,7 @@ def smart_preprocess_fit_transform(
     # Copia defensiva para não mutar o df original
     df_out = df.copy()
 
-    # Define colunas candidatas
+    # Define colunas candidatas (apenas colunas numéricas, se pedido)
     if numeric_only:
         candidate_cols = df_out.select_dtypes(include=[np.number]).columns.tolist()
     else:
@@ -370,14 +143,14 @@ def smart_preprocess_fit_transform(
         # (a) Remove colunas constantes/quase constantes
         if _near_constant(s, tol_unique=near_constant_unique_tol):
             dropped_cols.append(col)
-            reasons.append(f"near_constant(nunique<={near_constant_unique_tol})")
+            reasons.append("Coluna constante ou quase constante.")
             plans.append(ColumnPlan(col=col, do_log1p=False, scaler_type="none", reasons=tuple(reasons)))
             continue
 
         # (b) Mantém binárias sem scaling
         if _is_binary(s):
             passthrough_cols.append(col)
-            reasons.append("binary_passthrough")
+            reasons.append("Coluna binária detectada.")
             plans.append(ColumnPlan(col=col, do_log1p=False, scaler_type="none", reasons=tuple(reasons)))
             continue
 
@@ -389,19 +162,17 @@ def smart_preprocess_fit_transform(
         # (d) Decide log1p
         do_log1p = False
         if abs(skew) >= skew_threshold_for_log:
-            if (not log_requires_nonnegative) or nonneg:
-                do_log1p = True
-                reasons.append(f"log1p(skew={skew:.2f})")
+            if log_requires_nonnegative and not nonneg:
+                reasons.append("Assimetria alta, mas valores negativos impedem log1p.")
             else:
-                reasons.append(f"skip_log(has_negative, skew={skew:.2f})")
+                do_log1p = True
+                reasons.append("Transformação log1p aplicada devido à alta assimetria.")
 
         # (e) Decide scaler
-        if out_ratio >= outlier_ratio_threshold:
-            scaler_type = "robust"
-            reasons.append(f"robust(outlier_ratio={out_ratio:.3f}, k={robust_iqr_k})")
-        else:
-            scaler_type = "minmax" if prefer_minmax else "standard"
-            reasons.append(f"{scaler_type}(outlier_ratio={out_ratio:.3f})")
+        scaler_type = "robust" if out_ratio > outlier_ratio_threshold else "standard"
+        if prefer_minmax and scaler_type == "standard":
+            scaler_type = "minmax"
+        reasons.append(f"Escalonador escolhido: {scaler_type}.")
 
         plans.append(ColumnPlan(col=col, do_log1p=do_log1p, scaler_type=scaler_type, reasons=tuple(reasons)))
 
@@ -409,51 +180,22 @@ def smart_preprocess_fit_transform(
     # 2) Execução: aplica transformações de fato
     # --------------------------------------------------------------
     for plan in plans:
-        col = plan.col
-
-        # Pula colunas marcadas para drop
-        if col in dropped_cols:
-            continue
-
-        # Converte a coluna para numérico e forma (n, 1) para sklearn
-        # Nota: valores inválidos viram NaN; scalers do sklearn não aceitam NaN.
-        # Se você tem NaNs, recomendo plugar um SimpleImputer antes do scaling.
-        x = pd.to_numeric(df_out[col], errors="coerce").to_numpy().reshape(-1, 1)
-
-        # Aplica log1p (não precisa fit)
+        s = df_out[plan.col]
         if plan.do_log1p:
-            logger.info(f"[{col}] Aplicando log1p. Motivos: {plan.reasons}")
-            x = FunctionTransformer(func=np.log1p, validate=False).transform(x)
-
-        # Aplica o scaler escolhido
-        if plan.scaler_type == "standard":
-            logger.info(f"[{col}] Aplicando StandardScaler. Motivos: {plan.reasons}")
-            scaler = StandardScaler(**scaler_kwargs.get("standard", {}))
-            x = scaler.fit_transform(x)
-
-        elif plan.scaler_type == "robust":
-            logger.info(f"[{col}] Aplicando RobustScaler. Motivos: {plan.reasons}")
-            scaler = RobustScaler(**scaler_kwargs.get("robust", {}))
-            x = scaler.fit_transform(x)
-
-        elif plan.scaler_type == "minmax":
-            logger.info(f"[{col}] Aplicando MinMaxScaler. Motivos: {plan.reasons}")
-            scaler = MinMaxScaler(**scaler_kwargs.get("minmax", {}))
-            x = scaler.fit_transform(x)
-
-        else:
-            # "none" -> passthrough (binárias etc.)
-            logger.info(f"[{col}] Sem scaling (passthrough). Motivos: {plan.reasons}")
-
-        # Reinsere no DataFrame como vetor 1D
-        df_out[col] = x.ravel()
+            df_out[plan.col] = apply_log_transformation(data=s, 
+                                                        column_name=plan.col)
+        if plan.scaler_type != "none":
+            df_out[plan.col] = apply_scaling(s, 
+                                             scaler_type=plan.scaler_type, 
+                                             column_name=plan.col,
+                                             **scaler_kwargs.get(plan.scaler_type, {}), 
+                                             )
 
     # --------------------------------------------------------------
     # 3) Drop final (colunas constantes)
     # --------------------------------------------------------------
     if dropped_cols:
-        logger.info(f"Removendo colunas constantes/quase constantes: {dropped_cols}")
-        df_out = df_out.drop(columns=dropped_cols)
+        df_out.drop(columns=dropped_cols, inplace=True)
 
     # --------------------------------------------------------------
     # 4) Monta relatório imutável (bom para auditoria/explicabilidade)

@@ -1,26 +1,17 @@
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
-X = np.array([[20],
-              [30],
-              [40],
-              [50],
-              [60]])
+X = np.array([
+    [25, 3000, 600],
+    [40, 8000, 720],
+    [35, 5000, 680],
+    [50, 12000, 750]
+])
 
 # Usando StandardScaler do sklearn
 scaler = StandardScaler()
 
 # Ajusta e transforma os dados
-
-"""
-📌 Pontos IMPORTANTES
-
-- O fit() aprende média e desvio
-- O transform() aplica
-- fit_transform() = atalho
-
-"""
-
 X_scaled = scaler.fit_transform(X)
 
 print("-"*50)

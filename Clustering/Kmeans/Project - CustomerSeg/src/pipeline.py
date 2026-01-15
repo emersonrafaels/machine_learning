@@ -29,9 +29,6 @@ def run_pipeline():
         model = create_kmeans_model(n_clusters=5, config=config)
         labels = model.fit_predict(X_transformed)
 
-        # Logando o modelo no MLflow
-        mlflow.sklearn.log_model(model, "kmeans_model")
-
         # 4. Pós-processamento
         cluster_info = analyze_clusters(X, labels)
 

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from sklearn.cluster import KMeans
-import mlflow
+from sklearn.metrics import silhouette_score
+import numpy as np
 
 
 @dataclass(frozen=True)
@@ -34,10 +35,31 @@ def create_kmeans_model(n_clusters: int, config: KMeansConfig) -> KMeans:
         max_iter=config.max_iter,
     )
 
-    # Logando as configurações do modelo no MLflow
-    mlflow.log_param("n_clusters", n_clusters)
-    mlflow.log_param("random_state", config.random_state)
-    mlflow.log_param("n_init", config.n_init)
-    mlflow.log_param("max_iter", config.max_iter)
-
     return model
+
+
+def find_optimal_clusters(data, min_clusters=2, max_clusters=10):
+    """
+    Detecta automaticamente o número ideal de clusters baseado no silhouette score.
+
+    Args:
+        data (np.ndarray or pd.DataFrame): Dados para clustering.
+        min_clusters (int): Número mínimo de clusters a testar.
+        max_clusters (int): Número máximo de clusters a testar.
+
+    Returns:
+        int: Número ideal de clusters.
+    """
+    best_score = -1
+    best_k = min_clusters
+
+    for k in range(min_clusters, max_clusters + 1):
+        model = KMeans(n_clusters=k, random_state=42)
+        labels = model.fit_predict(data)
+        score = silhouette_score(data, labels)
+
+        if score > best_score:
+            best_score = score
+            best_k = k
+
+    return best_k

@@ -73,7 +73,7 @@ def apply_scaling(
             Se scaler_type não for suportado.
     """
     # Loga a escolha do escalonador
-    logger.info("Aplicando escalonamento do tipo %s aos dados.", scaler_type)
+    logger.info(f"Aplicando escalonamento do tipo {scaler_type} aos dados.")
 
     # Mapeia string -> classe (mais pythonico do que if/elif repetido)
     scalers_map = {
@@ -112,7 +112,7 @@ def apply_log_transformation(
             Dados transformados.
     """
     # Loga a transformação aplicada
-    logger.info("Aplicando transformação log1p aos dados.")
+    logger.info(f"Aplicando transformação log1p aos dados.")
 
     # FunctionTransformer padroniza a interface sklearn
     transformer = FunctionTransformer(func=np.log1p, **kwargs)
@@ -422,28 +422,28 @@ def smart_preprocess_fit_transform(
 
         # Aplica log1p (não precisa fit)
         if plan.do_log1p:
-            logger.info("[%s] Aplicando log1p. Motivos: %s", col, list(plan.reasons))
+            logger.info(f"[{col}] Aplicando log1p. Motivos: {plan.reasons}")
             x = FunctionTransformer(func=np.log1p, validate=False).transform(x)
 
         # Aplica o scaler escolhido
         if plan.scaler_type == "standard":
-            logger.info("[%s] Aplicando StandardScaler. Motivos: %s", col, list(plan.reasons))
+            logger.info(f"[{col}] Aplicando StandardScaler. Motivos: {plan.reasons}")
             scaler = StandardScaler(**scaler_kwargs.get("standard", {}))
             x = scaler.fit_transform(x)
 
         elif plan.scaler_type == "robust":
-            logger.info("[%s] Aplicando RobustScaler. Motivos: %s", col, list(plan.reasons))
+            logger.info(f"[{col}] Aplicando RobustScaler. Motivos: {plan.reasons}")
             scaler = RobustScaler(**scaler_kwargs.get("robust", {}))
             x = scaler.fit_transform(x)
 
         elif plan.scaler_type == "minmax":
-            logger.info("[%s] Aplicando MinMaxScaler. Motivos: %s", col, list(plan.reasons))
+            logger.info(f"[{col}] Aplicando MinMaxScaler. Motivos: {plan.reasons}")
             scaler = MinMaxScaler(**scaler_kwargs.get("minmax", {}))
             x = scaler.fit_transform(x)
 
         else:
             # "none" -> passthrough (binárias etc.)
-            logger.info("[%s] Sem scaling (passthrough). Motivos: %s", col, list(plan.reasons))
+            logger.info(f"[{col}] Sem scaling (passthrough). Motivos: {plan.reasons}")
 
         # Reinsere no DataFrame como vetor 1D
         df_out[col] = x.ravel()
@@ -452,7 +452,7 @@ def smart_preprocess_fit_transform(
     # 3) Drop final (colunas constantes)
     # --------------------------------------------------------------
     if dropped_cols:
-        logger.info("Removendo colunas constantes/quase constantes: %s", dropped_cols)
+        logger.info(f"Removendo colunas constantes/quase constantes: {dropped_cols}")
         df_out = df_out.drop(columns=dropped_cols)
 
     # --------------------------------------------------------------

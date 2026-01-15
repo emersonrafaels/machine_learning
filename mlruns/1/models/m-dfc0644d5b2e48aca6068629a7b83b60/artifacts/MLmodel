@@ -1,0 +1,33 @@
+artifact_path: "file:C:/Users/emers/OneDrive/\xC1rea de Trabalho/Estudos/Dados/Dados/ML/CD/machine_learning/mlruns/1/models/m-dfc0644d5b2e48aca6068629a7b83b60/artifacts"
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.5
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+is_signature_from_type_hint: false
+mlflow_version: 3.8.1
+model_id: m-dfc0644d5b2e48aca6068629a7b83b60
+model_size_bytes: 2798
+model_uuid: m-dfc0644d5b2e48aca6068629a7b83b60
+prompts: null
+run_id: a727e84d76ec48bfa311f046a6ddb3b2
+signature:
+  inputs: '[{"type": "long", "name": "Channel", "required": true}, {"type": "double",
+    "name": "Fresh", "required": true}, {"type": "double", "name": "Milk", "required":
+    true}, {"type": "double", "name": "Grocery", "required": true}, {"type": "double",
+    "name": "Frozen", "required": true}, {"type": "double", "name": "Detergents_Paper",
+    "required": true}, {"type": "double", "name": "Delicassen", "required": true},
+    {"type": "double", "name": "Region", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int32", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-01-15 05:36:07.269895'

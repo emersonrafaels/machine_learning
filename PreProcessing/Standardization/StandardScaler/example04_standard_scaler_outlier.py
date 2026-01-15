@@ -16,11 +16,8 @@ X_std = scaler_std.fit_transform(X_reshaped)
 scaler_robust = RobustScaler()
 X_robust = scaler_robust.fit_transform(X_reshaped)
 
-df = pd.DataFrame({
-    "original": X_outliers,
-    "standard": X_std.flatten(),
-    "robust": X_robust.flatten()
-})
+df = pd.DataFrame(
+    {"original": X_outliers, "standard": X_std.flatten(), "robust": X_robust.flatten()}
+)
 
 print(df.head())
-

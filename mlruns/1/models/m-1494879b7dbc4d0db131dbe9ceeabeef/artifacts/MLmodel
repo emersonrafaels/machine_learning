@@ -1,0 +1,26 @@
+artifact_path: "file:C:/Users/emers/OneDrive/\xC1rea de Trabalho/Estudos/Dados/Dados/ML/CD/machine_learning/mlruns/1/models/m-1494879b7dbc4d0db131dbe9ceeabeef/artifacts"
+flavors:
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+is_signature_from_type_hint: false
+mlflow_version: 3.8.1
+model_id: m-1494879b7dbc4d0db131dbe9ceeabeef
+model_size_bytes: 1136
+model_uuid: m-1494879b7dbc4d0db131dbe9ceeabeef
+prompts: null
+run_id: b23e3e0ad7fc482d99a415191a2bf105
+signature:
+  inputs: '[{"type": "long", "name": "Channel", "required": true}, {"type": "double",
+    "name": "Fresh", "required": true}, {"type": "double", "name": "Milk", "required":
+    true}, {"type": "double", "name": "Grocery", "required": true}, {"type": "double",
+    "name": "Frozen", "required": true}, {"type": "double", "name": "Detergents_Paper",
+    "required": true}, {"type": "double", "name": "Delicassen", "required": true},
+    {"type": "double", "name": "Region", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1,
+    2]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-01-15 05:25:11.495337'

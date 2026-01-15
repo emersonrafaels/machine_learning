@@ -93,16 +93,12 @@ def plotar_clusters_iris(X_scaled, labels):
         None
     """
     plt.scatter(
-        X_scaled[:, 0], X_scaled[:, 1],
-        c=labels,
-        cmap='viridis',
-        s=50,
-        alpha=0.6
+        X_scaled[:, 0], X_scaled[:, 1], c=labels, cmap="viridis", s=50, alpha=0.6
     )
 
-    plt.title('KMeans - Clusters no Dataset Iris')
-    plt.xlabel('Feature 1 (normalizada)')
-    plt.ylabel('Feature 2 (normalizada)')
+    plt.title("KMeans - Clusters no Dataset Iris")
+    plt.xlabel("Feature 1 (normalizada)")
+    plt.ylabel("Feature 2 (normalizada)")
     plt.show()
 
 

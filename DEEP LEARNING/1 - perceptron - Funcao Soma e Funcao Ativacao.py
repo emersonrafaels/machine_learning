@@ -1,17 +1,20 @@
 import numpy as np
 
+
 def soma(e, p):
 
-  # REALIZANDO O PRODUTO ESCALAR
+    # REALIZANDO O PRODUTO ESCALAR
 
-  return e.dot(p)
+    return e.dot(p)
+
 
 def stepFunction(soma):
 
-    if (soma >= 1):
+    if soma >= 1:
         return 1
 
     return 0
+
 
 # OBTENDO A ENTRADA E OS PESOS
 inputs = np.array([0, 1])

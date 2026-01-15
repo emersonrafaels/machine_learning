@@ -10,14 +10,14 @@ from sklearn.metrics import classification_report, accuracy_score
 
 SEED = 42
 
-class Dataframe_VW():
+
+class Dataframe_VW:
 
     def __init__(self):
 
         pass
 
     def __convert_row_to_vw_format(self, row, column_target="y"):
-
         """
 
         CONVERTINDO ROW (SERIES) TO VOWPAL WABBIT FORMAT
@@ -37,11 +37,7 @@ class Dataframe_VW():
 
         return res
 
-
-    def convert_dataframe_to_vw_format(self,
-                                       dataframe,
-                                       column_target="y"):
-
+    def convert_dataframe_to_vw_format(self, dataframe, column_target="y"):
         """
 
         CONVERTINDO DATAFRAME TO VOWPAL WABBIT FORMAT
@@ -57,8 +53,7 @@ class Dataframe_VW():
         # INTERACTING DATAFRAM
         # USING LIST COMPREHESION
         data_vw_format = [
-            self.__convert_row_to_vw_format(row=row,
-                                            column_target=column_target)
+            self.__convert_row_to_vw_format(row=row, column_target=column_target)
             for idx, row in dataframe.iterrows()
         ]
 
@@ -111,17 +106,20 @@ def orchestra_train_test_model(SEED=0):
 
     # GET METRICS
     result["support"] = len(predictions)
-    result["accuracy"] = accuracy_score(y_pred=predictions,
-                                        y_true=testing_data[column_target])
-    result["classification_report"] = classification_report(y_pred=predictions,
-                                                            y_true=testing_data[column_target],
-                                                            output_dict=True,
-                                                            zero_division=0)
+    result["accuracy"] = accuracy_score(
+        y_pred=predictions, y_true=testing_data[column_target]
+    )
+    result["classification_report"] = classification_report(
+        y_pred=predictions,
+        y_true=testing_data[column_target],
+        output_dict=True,
+        zero_division=0,
+    )
 
     return predictions, result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     predictions, results = orchestra_train_test_model(SEED=SEED)
 

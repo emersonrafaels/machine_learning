@@ -8,6 +8,7 @@ class KMeansConfig:
     """
     Configurações para o modelo KMeans.
     """
+
     k_min: int = 2
     k_max: int = 10
     random_state: int = 42

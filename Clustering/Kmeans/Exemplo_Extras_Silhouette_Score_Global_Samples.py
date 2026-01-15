@@ -25,11 +25,19 @@ def gerar_dados_manualmente():
     Returns:
         ndarray: Matriz X contendo os pontos.
     """
-    X = np.array([
-        [1, 2], [2, 1], [1, 3],        # Cluster 1
-        [8, 8], [9, 7], [8, 9],        # Cluster 2
-        [15, 2], [16, 3], [14, 1]      # Cluster 3
-    ])
+    X = np.array(
+        [
+            [1, 2],
+            [2, 1],
+            [1, 3],  # Cluster 1
+            [8, 8],
+            [9, 7],
+            [8, 9],  # Cluster 2
+            [15, 2],
+            [16, 3],
+            [14, 1],  # Cluster 3
+        ]
+    )
     return X
 
 

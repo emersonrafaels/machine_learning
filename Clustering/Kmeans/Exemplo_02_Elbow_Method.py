@@ -32,7 +32,7 @@ def gerar_dados(n_samples=300, centers=5, cluster_std=0.7, random_state=42):
         n_samples=n_samples,
         centers=centers,
         cluster_std=cluster_std,
-        random_state=random_state
+        random_state=random_state,
     )
     return X
 
@@ -82,10 +82,10 @@ def plotar_metodo_cotovelo(lista_k, lista_inercia):
     Returns:
         None
     """
-    plt.plot(lista_k, lista_inercia, marker='o')
-    plt.title('Método do Cotovelo')
-    plt.xlabel('Número de Clusters (k)')
-    plt.ylabel('Inércia')
+    plt.plot(lista_k, lista_inercia, marker="o")
+    plt.title("Método do Cotovelo")
+    plt.xlabel("Número de Clusters (k)")
+    plt.ylabel("Inércia")
     plt.xticks(lista_k)
     plt.grid(True)
     plt.show()

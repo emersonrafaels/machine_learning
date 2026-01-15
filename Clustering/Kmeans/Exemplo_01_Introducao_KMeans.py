@@ -43,7 +43,7 @@ def gerar_dados(n_samples=300, centers=4, cluster_std=0.6, random_state=42):
         n_samples=n_samples,
         centers=centers,
         cluster_std=cluster_std,
-        random_state=random_state
+        random_state=random_state,
     )
     return X, y
 
@@ -90,26 +90,21 @@ def plotar_clusters(X, labels, centers):
     Returns:
         None
     """
-    plt.scatter(
-        X[:, 0], X[:, 1],
-        c=labels,
-        cmap='viridis',
-        s=50,
-        alpha=0.6
-    )
+    plt.scatter(X[:, 0], X[:, 1], c=labels, cmap="viridis", s=50, alpha=0.6)
 
     plt.scatter(
-        centers[:, 0], centers[:, 1],
-        c='red',
+        centers[:, 0],
+        centers[:, 1],
+        c="red",
         s=200,
         alpha=0.75,
-        marker='X',
-        label='Centroids'
+        marker="X",
+        label="Centroids",
     )
 
-    plt.title('KMeans - Clusters e Centroids')
-    plt.xlabel('Feature 1')
-    plt.ylabel('Feature 2')
+    plt.title("KMeans - Clusters e Centroids")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
     plt.legend()
     plt.show()
 

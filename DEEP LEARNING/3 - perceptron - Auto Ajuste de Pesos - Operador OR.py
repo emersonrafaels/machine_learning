@@ -10,11 +10,11 @@ def get_result_step_function(result_sum_function):
 
     return 0
 
-def step_function(result_sum_function):
 
+def step_function(result_sum_function):
     """
 
-        FUNÇÃO PARA CALCULA A FUNÇÃO DEGRAU
+    FUNÇÃO PARA CALCULA A FUNÇÃO DEGRAU
 
     """
 
@@ -22,17 +22,18 @@ def step_function(result_sum_function):
         result_sum_function = [result_sum_function]
 
     # PERCORRENDO PARA CADA VALOR DOS RESULTADOS OBTIDOS
-    result_step_function = [get_result_step_function(value) for value in result_sum_function]
+    result_step_function = [
+        get_result_step_function(value) for value in result_sum_function
+    ]
 
     return result_step_function
 
 
 def sum_function(e, p):
-
     """
 
-        FUNÇÃO PARA CALCULAR O PRODUTO ESCALAR ENTRE
-        INPUTS E PESOS DO MODELO
+    FUNÇÃO PARA CALCULAR O PRODUTO ESCALAR ENTRE
+    INPUTS E PESOS DO MODELO
 
     """
 
@@ -43,21 +44,23 @@ def sum_function(e, p):
 def get_error(inputs, predict, y_true):
 
     # OBTENDO OS ELEMENTOS DIFERENTES DA CLASSIFICAÇÃO
-    elements_error = {idx: inputs[idx] for idx in range(len(predict)) if predict[idx] != y_true[idx]}
+    elements_error = {
+        idx: inputs[idx] for idx in range(len(predict)) if predict[idx] != y_true[idx]
+    }
 
     # OBTENDO O ERRO (INVERSO DA ACURÁCIA)
-    error_rate = (1 - accuracy_score(y_pred=predict, y_true=y_true))
+    error_rate = 1 - accuracy_score(y_pred=predict, y_true=y_true)
 
     # OBTENDO A QUANTIDADE ABSOLUTA DE ERROS
-    absolute_error = len(y_true)*error_rate
+    absolute_error = len(y_true) * error_rate
 
     return elements_error, absolute_error, error_rate
 
-def calculate_new_weights(weights, learning_rate, inputs, absolute_error):
 
+def calculate_new_weights(weights, learning_rate, inputs, absolute_error):
     """
 
-        new_weight = weight + learning_rate*value*absolute_error
+    new_weight = weight + learning_rate*value*absolute_error
 
     """
 
@@ -95,8 +98,7 @@ contador_rodadas = 1
 
 while error_initial > error_target:
 
-    print("RODADA ATUAL: {} - PESOS COM VALOR: {}".format(contador_rodadas,
-                                                          weights))
+    print("RODADA ATUAL: {} - PESOS COM VALOR: {}".format(contador_rodadas, weights))
     print("ERRO ATUAL: {}".format(error_initial))
 
     # CALCULANDO A FUNÇÃO SOMA
@@ -106,19 +108,20 @@ while error_initial > error_target:
     result_step_function = step_function(result_sum_function)
 
     # OBTENDO A QUANTIDADE DE ERROR
-    elements_error, absolute_error, error_initial = get_error(inputs=inputs,
-                                                              predict=result_step_function,
-                                                              y_true=outputs)
+    elements_error, absolute_error, error_initial = get_error(
+        inputs=inputs, predict=result_step_function, y_true=outputs
+    )
 
     if error_initial > error_target:
 
         # ATUALIZANDO OS PESOS
-        weights = calculate_new_weights(weights, learning_rate, elements_error, absolute_error)
+        weights = calculate_new_weights(
+            weights, learning_rate, elements_error, absolute_error
+        )
 
-        contador_rodadas +=1
+        contador_rodadas += 1
 
-print("-"*50)
+print("-" * 50)
 print("REDE NEURAL - PERCEPTRON - FINALIZADA COM SUCESSO")
-print("RODADA FINAL: {} - PESOS COM VALOR: {}".format(contador_rodadas,
-                                                      weights))
+print("RODADA FINAL: {} - PESOS COM VALOR: {}".format(contador_rodadas, weights))
 print("ERRO FINAL: {}".format(error_initial))

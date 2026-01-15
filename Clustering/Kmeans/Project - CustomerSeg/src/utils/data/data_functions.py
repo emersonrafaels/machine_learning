@@ -52,7 +52,9 @@ __copyright__ = "Verificador Inteligente de Orçamentos de Obras"
 __credits__ = ["Emerson V. Rafael", "Lucas Ken", "Clarissa Simoyama"]
 __license__ = "MIT"
 __version__ = "1.0.0"
-__maintainer__ = "Emerson V. Rafael (emervin), Lucas Ken (kushida), Clarissa Simoyama (simoyam)"
+__maintainer__ = (
+    "Emerson V. Rafael (emervin), Lucas Ken (kushida), Clarissa Simoyama (simoyam)"
+)
 __squad__ = "DataCraft"
 __email__ = "emersonssmile@gmail.com"
 __status__ = "Development"
@@ -134,14 +136,18 @@ def read_data(
                     logger.warning(
                         f"Aba '{sheet_name}' não encontrada. Carregando a aba padrão '{default_sheet}'."
                     )
-                    return pd.read_excel(file_path, sheet_name=default_sheet, header=header)
+                    return pd.read_excel(
+                        file_path, sheet_name=default_sheet, header=header
+                    )
                 elif isinstance(default_sheet, list):
                     for sheet in default_sheet:
                         if sheet in available_sheets:
                             logger.warning(
                                 f"Aba '{sheet_name}' não encontrada. Carregando a aba padrão '{sheet}'."
                             )
-                            return pd.read_excel(file_path, sheet_name=sheet, header=header)
+                            return pd.read_excel(
+                                file_path, sheet_name=sheet, header=header
+                            )
                 raise ValueError(
                     f"Aba '{sheet_name}' não encontrada no arquivo '{file_path}'. "
                     f"As abas disponíveis são: {available_sheets}"
@@ -306,11 +312,19 @@ def transform_case(
         )
     if columns_to_remove_spaces:
         column_mapping.update(
-            {col: col.replace(" ", "") for col in columns_to_remove_spaces if col in column_mapping}
+            {
+                col: col.replace(" ", "")
+                for col in columns_to_remove_spaces
+                if col in column_mapping
+            }
         )
     if columns_to_remove_accents:
         column_mapping.update(
-            {col: unidecode(col) for col in columns_to_remove_accents if col in column_mapping}
+            {
+                col: unidecode(col)
+                for col in columns_to_remove_accents
+                if col in column_mapping
+            }
         )
 
     # Atualizar os nomes das colunas no DataFrame
@@ -339,16 +353,22 @@ def transform_case(
     if cells_to_remove_spaces:
         for col in cells_to_remove_spaces:
             if col in df.columns:
-                df[col] = df[col].apply(lambda x: transform_value(x, remove_spaces=True))
+                df[col] = df[col].apply(
+                    lambda x: transform_value(x, remove_spaces=True)
+                )
     if cells_to_remove_accents:
         for col in cells_to_remove_accents:
             if col in df.columns:
-                df[col] = df[col].apply(lambda x: transform_value(x, remove_accents=True))
+                df[col] = df[col].apply(
+                    lambda x: transform_value(x, remove_accents=True)
+                )
 
     return df
 
 
-def filter_columns(df: pd.DataFrame, columns: list, allow_partial: bool = True) -> pd.DataFrame:
+def filter_columns(
+    df: pd.DataFrame, columns: list, allow_partial: bool = True
+) -> pd.DataFrame:
     """
     Filtra as colunas de um DataFrame com base em uma lista de colunas fornecida.
 
@@ -370,7 +390,9 @@ def filter_columns(df: pd.DataFrame, columns: list, allow_partial: bool = True) 
     # Se não permitir parcial e houver colunas faltantes, gera um erro
     if not allow_partial and len(existing_columns) != len(columns):
         missing_columns = [col for col in columns if col not in df.columns]
-        raise ValueError(f"As seguintes colunas estão ausentes no DataFrame: {missing_columns}")
+        raise ValueError(
+            f"As seguintes colunas estão ausentes no DataFrame: {missing_columns}"
+        )
 
     # Retorna o DataFrame filtrado com as colunas existentes
     return df[existing_columns]
@@ -395,7 +417,9 @@ def rename_columns(df: pd.DataFrame, rename_dict: Union[dict, "Box"]) -> pd.Data
     df.columns = df.columns.fillna("")
 
     # Filtra o rename_dict para incluir apenas colunas que existem no DataFrame
-    valid_rename_dict = {col: rename_dict[col] for col in rename_dict if col in df.columns}
+    valid_rename_dict = {
+        col: rename_dict[col] for col in rename_dict if col in df.columns
+    }
 
     # Renomeia as colunas do DataFrame
     df = df.rename(columns=valid_rename_dict)
@@ -403,7 +427,9 @@ def rename_columns(df: pd.DataFrame, rename_dict: Union[dict, "Box"]) -> pd.Data
     return df
 
 
-def ensure_columns_exist(df: pd.DataFrame, columns: list, default_value=None) -> pd.DataFrame:
+def ensure_columns_exist(
+    df: pd.DataFrame, columns: list, default_value=None
+) -> pd.DataFrame:
     """
     Garante que todas as colunas especificadas existam no DataFrame, criando-as com um valor padrão se necessário.
 
@@ -483,7 +509,13 @@ def export_to_json(
                 for key, df in data.items()
             }
             with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(json_data, f, ensure_ascii=False, indent=4, default=default_serializer)
+                json.dump(
+                    json_data,
+                    f,
+                    ensure_ascii=False,
+                    indent=4,
+                    default=default_serializer,
+                )
         else:
             raise ValueError(
                 "O tipo de dado fornecido não é suportado. Use um DataFrame ou um dicionário de DataFrames/dados."
@@ -492,7 +524,9 @@ def export_to_json(
         raise RuntimeError(f"Erro ao exportar para JSON em {file_path}: {str(e)}")
 
 
-def cast_columns(df: pd.DataFrame, column_types: Dict[str, Union[str, type]]) -> pd.DataFrame:
+def cast_columns(
+    df: pd.DataFrame, column_types: Dict[str, Union[str, type]]
+) -> pd.DataFrame:
     """
     Tenta converter as colunas de um DataFrame para os tipos especificados.
 
@@ -533,7 +567,9 @@ def cast_columns(df: pd.DataFrame, column_types: Dict[str, Union[str, type]]) ->
                     if col_type.startswith("int"):
                         # Preenche NaN com 0 antes de converter para int
                         df[column] = (
-                            pd.to_numeric(df[column], errors="coerce").fillna(0).astype(col_type)
+                            pd.to_numeric(df[column], errors="coerce")
+                            .fillna(0)
+                            .astype(col_type)
                         )
 
                         # Após a conversão, substitui valores NaN por string vazia

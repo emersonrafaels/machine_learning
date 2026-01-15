@@ -16,7 +16,7 @@ from src.utils.datasets.get_data import buscar_dados_wholesale_customers
 from src.preprocessing.preprocessing import smart_preprocess_fit_transform
 from src.model.model import create_kmeans_model, KMeansConfig, find_optimal_clusters
 from src.postprocessing.postprocessing import analyze_clusters
-from src.utils.visualization.kmeans_visualization import plot_clusters, save_plot_to_tempfile
+from src.utils.visualization.kmeans_visualization import plot_clusters, plot_clusters_pairwise, save_plot_to_tempfile
 
 def run_pipeline(list_columns_to_drop=None,
                  k_clusters=None,
@@ -97,6 +97,12 @@ def run_pipeline(list_columns_to_drop=None,
         # Salva o gráfico em um arquivo temporário e registra como artefato
         temp_file_path = save_plot_to_tempfile(plt)
         mlflow.log_artifact(temp_file_path, artifact_path="plots")
-        plt.show()
+        
+        # Plotando os clusters em pares de variáveis
+        plot_clusters_pairwise(data=X, 
+                               labels=labels, 
+                               feature_names=X.columns.tolist(), 
+                               view=True, 
+                               single_figure=True)
 
         logger.success("Pipeline concluída com sucesso.")

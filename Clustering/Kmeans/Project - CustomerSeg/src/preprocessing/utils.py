@@ -7,15 +7,24 @@ Inclui funções para escalonamento, transformação logarítmica e análise de 
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import FunctionTransformer, MinMaxScaler, RobustScaler, StandardScaler
+from sklearn.preprocessing import (
+    FunctionTransformer,
+    MinMaxScaler,
+    RobustScaler,
+    StandardScaler,
+)
 from src.config.config_logger import logger
 
 # Funções de escalonamento
 
-def apply_scaling(data: pd.DataFrame | np.ndarray, *, 
-                  scaler_type: str = "standard", 
-                  column_name: str = "", 
-                  **kwargs) -> np.ndarray:
+
+def apply_scaling(
+    data: pd.DataFrame | np.ndarray,
+    *,
+    scaler_type: str = "standard",
+    column_name: str = "",
+    **kwargs,
+) -> np.ndarray:
     """
     Aplica escalonamento aos dados com base no tipo de escalonador especificado.
 
@@ -40,7 +49,9 @@ def apply_scaling(data: pd.DataFrame | np.ndarray, *,
     Raises:
         ValueError: Se o tipo de escalonador não for suportado.
     """
-    logger.info(f"Aplicando escalonamento do tipo {scaler_type} aos dados da coluna '{column_name}'.")
+    logger.info(
+        f"Aplicando escalonamento do tipo {scaler_type} aos dados da coluna '{column_name}'."
+    )
 
     # Mapeia os tipos de escalonadores para suas classes correspondentes
     scalers_map = {
@@ -52,7 +63,9 @@ def apply_scaling(data: pd.DataFrame | np.ndarray, *,
     # Obtém a classe do escalonador ou lança um erro se o tipo for inválido
     scaler_cls = scalers_map.get(scaler_type)
     if scaler_cls is None:
-        raise ValueError("Tipo de escalonador não suportado. Use: 'standard', 'robust' ou 'minmax'.")
+        raise ValueError(
+            "Tipo de escalonador não suportado. Use: 'standard', 'robust' ou 'minmax'."
+        )
 
     # Converte para DataFrame ou ndarray se for uma Series
     if isinstance(data, pd.Series):
@@ -62,9 +75,10 @@ def apply_scaling(data: pd.DataFrame | np.ndarray, *,
     scaler = scaler_cls(**kwargs)
     return scaler.fit_transform(data)
 
-def apply_log_transformation(data: pd.DataFrame | np.ndarray, 
-                             column_name: str = "", 
-                             **kwargs) -> np.ndarray:
+
+def apply_log_transformation(
+    data: pd.DataFrame | np.ndarray, column_name: str = "", **kwargs
+) -> np.ndarray:
     """
     Aplica transformação logarítmica log1p (log(1 + x)) aos dados.
 
@@ -89,6 +103,7 @@ def apply_log_transformation(data: pd.DataFrame | np.ndarray,
     # Aplica a transformação diretamente (não é necessário fit para log1p)
     return transformer.transform(data)
 
+
 # Funções auxiliares para análise de colunas
 def _is_binary(s: pd.Series) -> bool:
     """
@@ -106,7 +121,10 @@ def _is_binary(s: pd.Series) -> bool:
     # Verifica se há no máximo 2 valores únicos
     return len(pd.unique(x)) <= 2 if not x.empty else False
 
-def _outlier_ratio_iqr(s: pd.Series, *, iqr_k: float = 1.5, min_samples: int = 8) -> float:
+
+def _outlier_ratio_iqr(
+    s: pd.Series, *, iqr_k: float = 1.5, min_samples: int = 8
+) -> float:
     """
     Calcula a proporção de outliers em uma série usando o método do IQR (Tukey fences).
 
@@ -144,6 +162,7 @@ def _outlier_ratio_iqr(s: pd.Series, *, iqr_k: float = 1.5, min_samples: int = 8
     outliers = (x < lower_bound) | (x > upper_bound)
     return float(outliers.mean())
 
+
 def _skewness(s: pd.Series, *, min_samples: int = 8) -> float:
     """
     Calcula a assimetria (skewness) de uma série, ignorando NaNs.
@@ -161,6 +180,7 @@ def _skewness(s: pd.Series, *, min_samples: int = 8) -> float:
     # Retorna 0.0 se houver poucas amostras
     return float(pd.Series(x).skew()) if x.size >= min_samples else 0.0
 
+
 def _is_nonnegative(s: pd.Series) -> bool:
     """
     Verifica se todos os valores válidos em uma série são não-negativos.
@@ -176,6 +196,7 @@ def _is_nonnegative(s: pd.Series) -> bool:
 
     # Retorna True se todos os valores forem não-negativos
     return (x >= 0).all() if not x.empty else True
+
 
 def _near_constant(s: pd.Series, *, tol_unique: int = 1) -> bool:
     """

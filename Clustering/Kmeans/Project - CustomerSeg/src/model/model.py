@@ -2,7 +2,10 @@ from dataclasses import dataclass
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import numpy as np
-from src.utils.visualization.kmeans_visualization import plot_elbow_method, plot_silhouette_scores
+from src.utils.visualization.kmeans_visualization import (
+    plot_elbow_method,
+    plot_silhouette_scores,
+)
 
 
 @dataclass(frozen=True)
@@ -39,7 +42,9 @@ def create_kmeans_model(n_clusters: int, config: KMeansConfig) -> KMeans:
     return model
 
 
-def find_optimal_clusters(data, min_clusters=2, max_clusters=10, method="silhouette", plot=False):
+def find_optimal_clusters(
+    data, min_clusters=2, max_clusters=10, method="silhouette", plot=False
+):
     """
     Detecta automaticamente o número ideal de clusters baseado no método especificado.
 
@@ -94,7 +99,10 @@ def find_optimal_clusters(data, min_clusters=2, max_clusters=10, method="silhoue
             inertia_values.append(model.inertia_)
 
         # Detecta o "cotovelo" usando a diferença relativa da inércia
-        deltas = [inertia_values[i] - inertia_values[i + 1] for i in range(len(inertia_values) - 1)]
+        deltas = [
+            inertia_values[i] - inertia_values[i + 1]
+            for i in range(len(inertia_values) - 1)
+        ]
         best_k = deltas.index(max(deltas)) + min_clusters
 
         if plot:

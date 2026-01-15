@@ -33,9 +33,11 @@ from src.config.config_logger import logger
 # Relatórios (explicabilidade do que foi aplicado)
 # ---------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class ColumnPlan:
     """Plano de preprocessamento de uma coluna."""
+
     col: str
     do_log1p: bool
     scaler_type: str  # "standard" | "robust" | "minmax" | "none"
@@ -45,6 +47,7 @@ class ColumnPlan:
 @dataclass(frozen=True)
 class PreprocessReport:
     """Relatório final do preprocessamento."""
+
     plans: Tuple[ColumnPlan, ...]
     dropped_cols: Tuple[str, ...]
     passthrough_cols: Tuple[str, ...]
@@ -53,6 +56,7 @@ class PreprocessReport:
 # ---------------------------------------------------------------------
 # Orquestrador inteligente (fit_transform)
 # ---------------------------------------------------------------------
+
 
 def smart_preprocess_fit_transform(
     df: pd.DataFrame,
@@ -144,18 +148,28 @@ def smart_preprocess_fit_transform(
         if _near_constant(s, tol_unique=near_constant_unique_tol):
             dropped_cols.append(col)
             reasons.append("Coluna constante ou quase constante.")
-            plans.append(ColumnPlan(col=col, do_log1p=False, scaler_type="none", reasons=tuple(reasons)))
+            plans.append(
+                ColumnPlan(
+                    col=col, do_log1p=False, scaler_type="none", reasons=tuple(reasons)
+                )
+            )
             continue
 
         # (b) Mantém binárias sem scaling
         if _is_binary(s):
             passthrough_cols.append(col)
             reasons.append("Coluna binária detectada.")
-            plans.append(ColumnPlan(col=col, do_log1p=False, scaler_type="none", reasons=tuple(reasons)))
+            plans.append(
+                ColumnPlan(
+                    col=col, do_log1p=False, scaler_type="none", reasons=tuple(reasons)
+                )
+            )
             continue
 
         # (c) Calcula heurísticas (outliers/skew/nonneg)
-        out_ratio = _outlier_ratio_iqr(s, iqr_k=robust_iqr_k, min_samples=min_samples_stats)
+        out_ratio = _outlier_ratio_iqr(
+            s, iqr_k=robust_iqr_k, min_samples=min_samples_stats
+        )
         skew = _skewness(s, min_samples=min_samples_stats)
         nonneg = _is_nonnegative(s)
 
@@ -174,7 +188,14 @@ def smart_preprocess_fit_transform(
             scaler_type = "minmax"
         reasons.append(f"Escalonador escolhido: {scaler_type}.")
 
-        plans.append(ColumnPlan(col=col, do_log1p=do_log1p, scaler_type=scaler_type, reasons=tuple(reasons)))
+        plans.append(
+            ColumnPlan(
+                col=col,
+                do_log1p=do_log1p,
+                scaler_type=scaler_type,
+                reasons=tuple(reasons),
+            )
+        )
 
     # --------------------------------------------------------------
     # 2) Execução: aplica transformações de fato
@@ -182,14 +203,14 @@ def smart_preprocess_fit_transform(
     for plan in plans:
         s = df_out[plan.col]
         if plan.do_log1p:
-            df_out[plan.col] = apply_log_transformation(data=s, 
-                                                        column_name=plan.col)
+            df_out[plan.col] = apply_log_transformation(data=s, column_name=plan.col)
         if plan.scaler_type != "none":
-            df_out[plan.col] = apply_scaling(s, 
-                                             scaler_type=plan.scaler_type, 
-                                             column_name=plan.col,
-                                             **scaler_kwargs.get(plan.scaler_type, {}), 
-                                             )
+            df_out[plan.col] = apply_scaling(
+                s,
+                scaler_type=plan.scaler_type,
+                column_name=plan.col,
+                **scaler_kwargs.get(plan.scaler_type, {}),
+            )
 
     # --------------------------------------------------------------
     # 3) Drop final (colunas constantes)

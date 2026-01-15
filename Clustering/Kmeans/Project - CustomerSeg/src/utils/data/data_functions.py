@@ -482,7 +482,9 @@ def drop_columns(df: pd.DataFrame, columns_to_drop: list) -> pd.DataFrame:
     # Verifica se todas as colunas existem no DataFrame
     missing_columns = [col for col in columns_to_drop if col not in df.columns]
     if missing_columns:
-        logger.warning(f"As seguintes colunas não existem no DataFrame: {missing_columns}")
+        logger.warning(
+            f"As seguintes colunas não existem no DataFrame: {missing_columns}"
+        )
 
     # Remove as colunas especificadas
     return df.drop(columns=columns_to_drop)

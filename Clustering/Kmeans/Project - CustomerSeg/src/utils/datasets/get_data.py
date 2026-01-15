@@ -22,7 +22,9 @@ from src.config.config_dynaconf import get_settings
 settings = get_settings()
 
 
-def buscar_dados_wholesale_customers(list_columns_to_drop: list[str] = None) -> tuple[pd.DataFrame, Optional[pd.DataFrame]]:
+def buscar_dados_wholesale_customers(
+    list_columns_to_drop: list[str] = None,
+) -> tuple[pd.DataFrame, Optional[pd.DataFrame]]:
     """
     Busca o conjunto de dados Wholesale Customers do UCI Machine Learning Repository.
     Args:
@@ -48,7 +50,7 @@ def buscar_dados_wholesale_customers(list_columns_to_drop: list[str] = None) -> 
     X["Region"] = wholesale_customers.data.targets
 
     logger.info("Conjunto de dados obtido com sucesso!")
-    
+
     if list_columns_to_drop:
         X = drop_columns(df=X, columns_to_drop=list_columns_to_drop)
 

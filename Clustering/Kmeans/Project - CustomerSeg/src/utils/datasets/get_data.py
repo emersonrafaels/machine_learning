@@ -54,12 +54,14 @@ def get_data_wholesale_customers(
 
     logger.info("Conjunto de dados obtido com sucesso!")
 
-    if list_columns_to_drop:
-        X = drop_columns(df=X, columns_to_drop=list_columns_to_drop)
-
+    # Verifica se deve exportar os dados (exporta antes de dropar colunas)
     if dir_export_data:
         # Exporta os dados para o diretório data
         export_data(X, Path(base_dir, dir_export_data))
+    
+    # Verifica se deve dropar colunas
+    if list_columns_to_drop:
+        X = drop_columns(df=X, columns_to_drop=list_columns_to_drop)
 
     return X, y
 

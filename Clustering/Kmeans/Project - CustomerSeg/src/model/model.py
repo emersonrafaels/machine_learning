@@ -1,7 +1,10 @@
 from dataclasses import dataclass
+
+import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-import numpy as np
+
+
 from src.utils.visualization.kmeans_visualization import (
     plot_elbow_method,
     plot_silhouette_scores,

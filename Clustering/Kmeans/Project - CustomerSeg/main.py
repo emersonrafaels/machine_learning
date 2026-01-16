@@ -25,12 +25,13 @@ def main_model():
 
     """
 
+    # Lista de colunas a serem descartadas
+    list_columns_to_drop = ["Channel", "Region"]
+    dir_export_data = "data/inputs/wholesale_datasets.csv"
+
     # Configurações possiveis para encontrar o número ideal de clusters
     find_optimal_clusters_options = ["silhouette", "elbow"]
     find_optimal_clusters_method = find_optimal_clusters_options[1]
-
-    # Lista de colunas a serem descartadas
-    list_columns_to_drop = ["Channel", "Region"]
 
     # Número de clusters (defina como None para encontrar automaticamente)
     k_clusters = 3
@@ -38,6 +39,7 @@ def main_model():
     # Executa a pipeline completa de ciência de dados para segmentação de clientes.
     run_pipeline(
         list_columns_to_drop=list_columns_to_drop,
+        dir_export_data=dir_export_data,
         k_clusters=k_clusters,
         find_optimal_clusters_method=find_optimal_clusters_method,
     )

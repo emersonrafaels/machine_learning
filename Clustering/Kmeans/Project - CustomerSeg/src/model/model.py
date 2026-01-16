@@ -14,11 +14,14 @@ class KMeansConfig:
     Configurações para o modelo KMeans.
     """
 
-    k_min: int = 2
-    k_max: int = 10
-    random_state: int = 42
-    n_init: int = 20
-    max_iter: int = 300
+    k_min: int = 2  # Número mínimo de clusters a testar
+    k_max: int = 10  # Número máximo de clusters a testar
+    random_state: int = 42  # Semente para reprodutibilidade
+    n_init: int = 20  # Número de inicializações do algoritmo
+    max_iter: int = 300  # Número máximo de iterações
+    tol: float = 1e-4  # Tolerância para critério de convergência
+    algorithm: str = "lloyd"  # Algoritmo KMeans ("lloyd", "elkan", etc.)
+    init: str = "k-means++"  # Método de inicialização ("k-means++" ou "random")
 
 
 def create_kmeans_model(n_clusters: int, config: KMeansConfig) -> KMeans:
@@ -37,6 +40,9 @@ def create_kmeans_model(n_clusters: int, config: KMeansConfig) -> KMeans:
         random_state=config.random_state,
         n_init=config.n_init,
         max_iter=config.max_iter,
+        tol=config.tol,
+        algorithm=config.algorithm,
+        init=config.init,
     )
 
     return model

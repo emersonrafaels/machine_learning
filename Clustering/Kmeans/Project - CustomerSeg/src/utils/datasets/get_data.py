@@ -24,6 +24,7 @@ settings = get_settings()
 
 def buscar_dados_wholesale_customers(
     list_columns_to_drop: list[str] = None,
+    dir_export_data: Optional[str] = None,
 ) -> tuple[pd.DataFrame, Optional[pd.DataFrame]]:
     """
     Busca o conjunto de dados Wholesale Customers do UCI Machine Learning Repository.
@@ -31,6 +32,8 @@ def buscar_dados_wholesale_customers(
         list_columns_to_drop (list[str], opcional):
             Lista de nomes de colunas a serem descartadas do conjunto de dados.
             Padrão é None (nenhuma coluna descartada).
+        dir_export_data (str, opcional):
+            Diretório para exportar os dados obtidos como um arquivo CSV.
     Retorna:
         tuple: Uma tupla contendo os recursos (X) e os alvos (y) como DataFrames do pandas.
     """
@@ -53,6 +56,10 @@ def buscar_dados_wholesale_customers(
 
     if list_columns_to_drop:
         X = drop_columns(df=X, columns_to_drop=list_columns_to_drop)
+
+    if dir_export_data:
+        # Exporta os dados para o diretório data
+        export_data(X, Path(base_dir, dir_export_data))
 
     return X, y
 
@@ -78,7 +85,7 @@ def main_get_data():
     imprimir_metadados(df, n=3)
 
     # Exporta os dados para o diretório data
-    export_data(df, Path(base_dir, "data/wholesale_datasets.csv"))
+    export_data(df, Path(base_dir, "data/inputs/wholesale_datasets.csv"))
 
     return df
 

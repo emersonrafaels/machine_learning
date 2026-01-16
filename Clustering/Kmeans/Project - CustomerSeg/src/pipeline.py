@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parents[3]
 sys.path.append(str(BASE_DIR))
 
 from src.config.config_logger import logger
-from src.utils.datasets.get_data import buscar_dados_wholesale_customers
+from src.utils.datasets.get_data import get_data_wholesale_customers
 from src.preprocessing.preprocessing import smart_preprocess_fit_transform
 from src.model.model import create_kmeans_model, KMeansConfig, find_optimal_clusters
 from src.postprocessing.postprocessing import analyze_clusters
@@ -53,7 +53,7 @@ def run_pipeline(
     with mlflow.start_run():
 
         # 1. Obter os dados
-        X, _ = buscar_dados_wholesale_customers(
+        X, _ = get_data_wholesale_customers(
             list_columns_to_drop=list_columns_to_drop, dir_export_data=dir_export_data
         )
 

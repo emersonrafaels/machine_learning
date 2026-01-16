@@ -22,7 +22,7 @@ from src.config.config_dynaconf import get_settings
 settings = get_settings()
 
 
-def buscar_dados_wholesale_customers(
+def get_data_wholesale_customers(
     list_columns_to_drop: list[str] = None,
     dir_export_data: Optional[str] = None,
 ) -> tuple[pd.DataFrame, Optional[pd.DataFrame]]:
@@ -64,7 +64,7 @@ def buscar_dados_wholesale_customers(
     return X, y
 
 
-def imprimir_metadados(df, n=5):
+def display_dataset_info(df, n=5):
     """
     Imprime os metadados e as informações das variáveis do conjunto de dados Wholesale Customers.
     """
@@ -79,10 +79,10 @@ def main_get_data():
     """
 
     # Buscando os dados
-    df = buscar_dados_wholesale_customers()
+    df = get_data_wholesale_customers()
 
     # Visualizando os dados
-    imprimir_metadados(df, n=3)
+    display_dataset_info(df, n=3)
 
     # Exporta os dados para o diretório data
     export_data(df, Path(base_dir, "data/inputs/wholesale_datasets.csv"))

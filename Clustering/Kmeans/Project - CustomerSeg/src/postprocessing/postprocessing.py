@@ -10,8 +10,14 @@ def analyze_clusters(data, labels):
         dict: Informações sobre os clusters.
     """
     cluster_info = {}
+    
+    # Percorrendo todos os clusters
     for cluster_id in set(labels):
+        
+        # Filtrando apenas dados do cluster atual
         cluster_data = data[labels == cluster_id]
+        
+        # Obtemos quantidade e média das features para o cluster
         cluster_info[cluster_id] = {
             "size": len(cluster_data),
             "mean": cluster_data.mean().to_dict(),

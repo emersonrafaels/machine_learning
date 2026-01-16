@@ -112,5 +112,11 @@ Organiza o código em módulos:
 - **preprocessing:** Transformações nos dados.
 - **utils:** Funções auxiliares.
 
+## Análise Detalhada do Dataset
+
+Para uma análise detalhada do dataset utilizado neste projeto, acesse o link abaixo:
+
+[Wholesale Customers - UCI (Notion)](https://www.notion.so/Wholesale-Customers-UCI-2e7a441c1e77801cb2d2d975a8fa5a7e?source=copy_link)
+
 ## Contato
 Para dúvidas ou sugestões, entre em contato pelo email: [emersonssmile@gmail.com](mailto:emersonssmile@gmail.com).
